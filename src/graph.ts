@@ -50,7 +50,7 @@ export async function fetchAllMediaWithInsights(): Promise<MediaItem[]> {
     "permalink",
     "thumbnail_url",
     "timestamp",
-    "insights.metric(impressions,reach,plays,likes,comments,saves,shares,total_interactions)"
+    "insights.metric(impressions,reach,plays,views,likes,comments,saved,shares,follows,total_interactions)"
   ].join(",");
 
   let pageUrl = new URL(
@@ -62,18 +62,32 @@ export async function fetchAllMediaWithInsights(): Promise<MediaItem[]> {
 
   const out: MediaItem[] = [];
 
+  // calculate cutoff once
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - 36); // ~2.5 years
+
   while (pageUrl) {
     const json = await getJson<MediaResponse>(pageUrl.toString());
     const batch = Array.isArray(json.data) ? json.data : [];
     out.push(...batch);
 
+    // ===== STOP PAGINATION IF OLDEST ITEM IS BEYOND CUTOFF =====
+    const last = batch[batch.length - 1];
+    if (last?.timestamp) {
+      const ts = new Date(last.timestamp);
+      if (ts < cutoff) {
+        console.log("[info] Reached media older than 3 years — stopping pagination.");
+        break;
+      }
+    }
+
     const next = json?.paging?.next;
     if (!next) break;
 
     pageUrl = new URL(next);
-    // be nice to API
     await sleep(150);
   }
 
   return out;
 }
+

@@ -12,6 +12,8 @@ async function main() {
   const username = acct.username ?? "";
   const accountName = acct.name ?? "";
 
+  log.info(acct);
+ 
   log.info("Fetching ALL media with insights (auto-pagination) …");
   const media = await fetchAllMediaWithInsights();
   log.info(`Fetched ${media.length} media items.`);

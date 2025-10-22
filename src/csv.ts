@@ -6,11 +6,17 @@ import { CsvRow, NormalizedRow } from "./types";
 import { log } from "./logger";
 
 export async function readCsv(filePath: string): Promise<CsvRow[]> {
-  const buf = await fs.readFile(filePath);
+  let buf = await fs.readFile(filePath);
+  // remove UTF-8 BOM if present
+  if (buf[0] === 0xef && buf[1] === 0xbb && buf[2] === 0xbf) {
+    buf = buf.slice(3);
+  }
+
   const rows = parse(buf, { columns: true, skip_empty_lines: true }) as CsvRow[];
   log.info(`Loaded ${rows.length} rows from ${path.basename(filePath)}`);
   return rows;
 }
+
 
 export async function writeCsv(filePath: string, rows: NormalizedRow[], headers: string[]) {
   const csv = stringify(rows, { header: true, columns: headers });

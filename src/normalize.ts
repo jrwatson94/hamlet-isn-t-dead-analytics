@@ -47,10 +47,12 @@ export function normalizeApiRow(
     "Data comment": "Lifetime",
     "Date": "Lifetime",
     // Story-ish columns (not applicable)
-    "Views": metrics["plays"] ?? "",
+    "Views": metrics["views"] ?? "",
+    "Plays": metrics["plays"] ?? "",
     "Reach": metrics["reach"] ?? "",
     "Likes": metrics["likes"] ?? "",
     "Shares": metrics["shares"] ?? "",
+    "Follows": metrics["follows"] ?? "",
     "Replies": "",
     "Navigation": "",
     "Profile visits": "",
@@ -59,7 +61,7 @@ export function normalizeApiRow(
     // Extra API metrics
     "Impressions": metrics["impressions"] ?? "",
     "Comments": metrics["comments"] ?? "",
-    "Saves": metrics["saves"] ?? "",
+    "Saved": metrics["saved"] ?? "",
     "Total Interactions": metrics["total_interactions"] ?? "",
     "Media URL": item.media_url || "",
     "Thumbnail URL": item.thumbnail_url || ""
@@ -96,7 +98,7 @@ export function normalizeStoryCsvRow(row: Record<string, string>): NormalizedRow
     // API-only fields left blank
     "Impressions": "",
     "Comments": "",
-    "Saves": "",
+    "Saved": "",
     "Total Interactions": "",
     "Media URL": "",
     "Thumbnail URL": ""
@@ -116,19 +118,27 @@ export const PREFERRED_ORDER = [
   "Post type",
   "Data comment",
   "Date",
+
+  // Core performance metrics (stories + posts)
   "Views",
+  "Plays",
   "Reach",
+  "Impressions",
   "Likes",
+  "Comments",
   "Shares",
+  "Saved",
+  "Follows",
+  "Total Interactions",
+
+  // Story-only fields
   "Replies",
   "Navigation",
   "Profile visits",
   "Link clicks",
   "Sticker taps",
-  "Impressions",
-  "Comments",
-  "Saves",
-  "Total Interactions",
+
+  // Media metadata
   "Media URL",
   "Thumbnail URL"
 ] as const;

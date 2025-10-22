@@ -4,10 +4,10 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts"
-  },
+    "start": "node dist/index.js"
+},
   "dependencies": {
     "csv-parse": "^5.5.6",
     "csv-stringify": "^6.5.0",
@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.18.12",
+    "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
