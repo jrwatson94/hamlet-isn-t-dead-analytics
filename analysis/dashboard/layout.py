@@ -96,7 +96,7 @@ layout = dbc.Container([
     html.Hr(),
 
     # --- NEW SECTION: TOP CONVERSION POSTS ---
-    html.H3("Top Posts by Conversion", className="fw-bold mt-4 mb-3 text-center"),
+    html.H3("Follow Conversion Rate", className="fw-bold mt-4 mb-3 text-center"),
     dbc.Row([
         dbc.Col(
             make_top_conversion_table(conv),  # <-- new table
