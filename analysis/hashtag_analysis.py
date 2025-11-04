@@ -30,7 +30,6 @@ df["EngagementRate"] = (
 ) * 100
 
 # ---------- Clean Data ----------
-# Drop invalid or nonsensical engagement values
 df = df[df["EngagementRate"].notna()]
 df = df[df["EngagementRate"] >= 0]
 df = df[df["EngagementRate"] <= 99.99]
@@ -56,7 +55,6 @@ summary = (
       })
       .rename(index={True: "Has hashtags", False: "No hashtags"})
 )
-
 summary.to_csv(SUMMARY_OUT)
 print(f"[ok] Wrote summary comparison → {SUMMARY_OUT}\n")
 print(summary)
@@ -73,14 +71,19 @@ if not tags_df.empty:
     top_tags = (
         tags_df.groupby("Hashtag")
                .agg({
-                   "EngagementRate": "mean",
+                   "EngagementRate": "median",   # median to reduce viral bias
                    "Reach": "mean",
                    "Likes": "mean",
                    "Hashtag": "count",
                })
                .rename(columns={"Hashtag": "PostCount"})
-               .sort_values("EngagementRate", ascending=False)
     )
+
+    # Require at least 3 posts per hashtag
+    top_tags = top_tags[top_tags["PostCount"] >= 3]
+
+    # Sort by median engagement
+    top_tags = top_tags.sort_values("EngagementRate", ascending=False)
 
     top_tags.to_csv(TAGS_OUT)
     print(f"[ok] Wrote per-hashtag stats → {TAGS_OUT}")
@@ -89,8 +92,8 @@ if not tags_df.empty:
     top10 = top_tags.head(10)
     plt.figure(figsize=(10, 5))
     plt.barh(top10.index[::-1], top10["EngagementRate"][::-1], color="#0047AB")
-    plt.xlabel("Average Engagement Rate (%)")
-    plt.title("Top 10 Hashtags by Engagement Rate")
+    plt.xlabel("Median Engagement Rate (%)")
+    plt.title("Top 10 Hashtags by Median Engagement Rate (≥3 posts)")
     plt.tight_layout()
     plt.savefig(os.path.join(OUT_DIR, "top_hashtags_chart.png"))
     print("[ok] Saved bar chart → output/top_hashtags_chart.png")
@@ -123,19 +126,18 @@ counts = df["NumHashtags"].value_counts()
 valid_counts = counts[counts >= 5].index
 mean_curve = mean_curve[mean_curve["NumHashtags"].isin(valid_counts)]
 
-# Plot the average line (smoothed but not fancy)
+# Plot the average line (light smoothing)
 x = mean_curve["NumHashtags"]
 y = mean_curve["EngagementRate"]
 
 if len(x) > 3:
-    # Smooth just for visual continuity
     x_smooth = np.linspace(x.min(), x.max(), 200)
-    y_smooth = make_interp_spline(x, y, k=1)(x_smooth)
+    y_smooth = make_interp_spline(x, y, k=1)(x_smooth)  # gentle continuity only
     plt.plot(x_smooth, y_smooth, color="red", linewidth=2, label="Average Engagement")
 else:
     plt.plot(x, y, color="red", linewidth=2, label="Average Engagement")
 
-# Annotate the main peak (optional but clear)
+# Annotate the main peak
 if len(x) > 0:
     peak_idx = np.argmax(y)
     peak_x = x.iloc[peak_idx]
