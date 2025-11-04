@@ -33,7 +33,7 @@ df["EngagementRate"] = (
 # Drop invalid or nonsensical engagement values
 df = df[df["EngagementRate"].notna()]
 df = df[df["EngagementRate"] >= 0]
-df = df[df["EngagementRate"] <= 100]
+df = df[df["EngagementRate"] <= 99.99]
 
 # ---------- Extract hashtags ----------
 def extract_hashtags(text):
