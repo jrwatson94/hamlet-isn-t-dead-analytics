@@ -20,12 +20,11 @@ for col in ["Reach", "Likes", "Comments", "Shares", "Saved"]:
 df["TotalEngagements"] = df["Likes"] + df["Comments"] + df["Shares"] + df["Saved"]
 df["EngagementRate"] = (df["TotalEngagements"] / df["Reach"].replace(0, pd.NA)) * 100
 
-# ---------- Clean Outliers ----------
-# Exclude low-reach posts (<10 reach)
-df = df[df["Reach"] >= 1]
+# ---------- Clean Data ----------
+df = df[df["EngagementRate"].notna()]
+df = df[df["EngagementRate"] >= 0]
+df = df[df["EngagementRate"] <= 99.99]
 
-# Cap engagement rates at 100% (to avoid distortion)
-df["EngagementRate"] = df["EngagementRate"].clip(upper=100)
 
 # ---------- Keep Relevant Columns ----------
 keep_cols = [

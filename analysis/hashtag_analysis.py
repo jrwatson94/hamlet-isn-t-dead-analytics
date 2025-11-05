@@ -17,6 +17,11 @@ SUMMARY_OUT = os.path.join(OUT_DIR, "hashtag_summary.csv")
 # ---------- Load ----------
 df = pd.read_csv(CSV_IN)
 
+# ---------- Remove outlier ----------
+OUTLIER_POST_ID = "18073628026714616"
+if "Post ID" in df.columns:
+    df = df[df["Post ID"].astype(str) != OUTLIER_POST_ID]
+
 # ---------- Ensure numeric ----------
 for col in ["Reach", "Likes", "Comments", "Shares", "Saved"]:
     df[col] = pd.to_numeric(df.get(col, 0), errors="coerce").fillna(0)
@@ -71,7 +76,7 @@ if not tags_df.empty:
     top_tags = (
         tags_df.groupby("Hashtag")
                .agg({
-                   "EngagementRate": "median",   # median to reduce viral bias
+                   "EngagementRate": "mean",   # mean to reduce viral bias
                    "Reach": "mean",
                    "Likes": "mean",
                    "Hashtag": "count",
@@ -82,7 +87,7 @@ if not tags_df.empty:
     # Require at least 3 posts per hashtag
     top_tags = top_tags[top_tags["PostCount"] >= 3]
 
-    # Sort by median engagement
+    # Sort by mean engagement
     top_tags = top_tags.sort_values("EngagementRate", ascending=False)
 
     top_tags.to_csv(TAGS_OUT)
@@ -92,8 +97,8 @@ if not tags_df.empty:
     top10 = top_tags.head(10)
     plt.figure(figsize=(10, 5))
     plt.barh(top10.index[::-1], top10["EngagementRate"][::-1], color="#0047AB")
-    plt.xlabel("Median Engagement Rate (%)")
-    plt.title("Top 10 Hashtags by Median Engagement Rate (≥3 posts)")
+    plt.xlabel("Mean Engagement Rate (%)")
+    plt.title("Top 10 Hashtags by Mean Engagement Rate (≥3 posts)")
     plt.tight_layout()
     plt.savefig(os.path.join(OUT_DIR, "top_hashtags_chart.png"))
     print("[ok] Saved bar chart → output/top_hashtags_chart.png")
