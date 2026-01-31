@@ -81,7 +81,7 @@ def make_top_conversion_table(df, limit=15):
         if isinstance(url, str) and url.startswith("http"):
             return (
                 "<img src='{0}' "
-                "style='height:150px;width:150px;object-fit:cover;"
+                "style='height:80px;width:80px;object-fit:cover;"
                 "border-radius:6px'/>"
             ).format(url)
         return ""
@@ -105,12 +105,12 @@ def make_top_conversion_table(df, limit=15):
         markdown_options={"html": True},
         style_cell={
             "fontFamily":"Arial",
-            "fontSize":"15px",
+            "fontSize":"10px",
             "whiteSpace":"normal",
             "height":"auto",
             "padding":"6px",
         },
-        style_data={"lineHeight":"16px"},
+        style_data={"lineHeight":"10px"},
         style_table={"overflowX":"auto"},
 
         # ---- NEW COLUMN SIZING BELOW ----

@@ -7,7 +7,6 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 CSV_IN  = os.path.join(BASE, "../merged.csv")
 OUT_DIR = os.path.join(BASE, "output")
 CSV_OUT = os.path.join(OUT_DIR, "posttype_comparison.csv")
-IMG_OUT = os.path.join(OUT_DIR, "posttype_comparison.png")
 IMG_NORM_OUT = os.path.join(OUT_DIR, "posttype_comparison_normalized.png")
 
 # ---------- Load Data ----------
@@ -80,8 +79,6 @@ plt.ylabel("Rate (%)")
 plt.title("Instagram Performance by Post Type (Absolute)")
 plt.legend()
 plt.tight_layout()
-plt.savefig(IMG_OUT, dpi=300)
-print(f"📊 Saved absolute chart image to: {IMG_OUT}")
 
 # ---------- Normalize for Comparison ----------
 # Scale each metric 0–100 within its own column
